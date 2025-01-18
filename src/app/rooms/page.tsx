@@ -8,6 +8,8 @@ import Filter from "@/components/Filter";
 import RoomCard from "@/components/RoomCard";
 import NavBar from "@/components/NavBar";
 
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 const RoomsPage = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [filteredRooms, setFilteredRooms] = useState<Room[]>([]);
@@ -22,14 +24,14 @@ const RoomsPage = () => {
   const [newBooking, setNewBooking] = useState({
     user_id: "", // Replace this with the logged-in user's ID
     room_id: "",
-    check_in: "",
-    check_out: "",
+    start_date: "",
+    end_date: "",
   });
 
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await fetch("/api/rooms.php"); // Replace with your API URL
+        const response = await fetch(`${apiBaseUrl}/rooms.php`); // Replace with your API URL
         if (!response.ok) {
           throw new Error("Failed to fetch rooms");
         }
@@ -81,16 +83,18 @@ const RoomsPage = () => {
 
   const handleAddBooking = async () => {
     try {
-      const response = await fetch("/api/bookings.php", {
+      const response = await fetch(`${apiBaseUrl}/bookings.php`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
-          user_id: newBooking.user_id,
           room_id: newBooking.room_id,
-          check_in: newBooking.check_in,
-          check_out: newBooking.check_out,
+          start_date: newBooking.start_date,
+          end_date: newBooking.end_date,
+          status: "confirmed",
         }),
+        credentials: "include",
       });
+
       const result = await response.json();
 
       if (result.success) {
@@ -100,8 +104,8 @@ const RoomsPage = () => {
         setNewBooking({
           user_id: "",
           room_id: "",
-          check_in: "",
-          check_out: "",
+          start_date: "",
+          end_date: "",
         });
       } else {
         alert("Failed to add booking: " + result.message);
@@ -201,30 +205,22 @@ const RoomsPage = () => {
             <h3 className="text-lg font-bold mb-4">
               Booking Room {selectedRoom.room_number}
             </h3>
-            <input
-              type="text"
-              placeholder="User ID"
-              value={newBooking.user_id}
-              onChange={(e) =>
-                setNewBooking({ ...newBooking, user_id: e.target.value })
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded mb-4"
-            />
+
             <input
               type="date"
               placeholder="Check-In Date"
-              value={newBooking.check_in}
+              value={newBooking.start_date}
               onChange={(e) =>
-                setNewBooking({ ...newBooking, check_in: e.target.value })
+                setNewBooking({ ...newBooking, start_date: e.target.value })
               }
               className="w-full px-3 py-2 border border-gray-300 rounded mb-4"
             />
             <input
               type="date"
               placeholder="Check-Out Date"
-              value={newBooking.check_out}
+              value={newBooking.end_date}
               onChange={(e) =>
-                setNewBooking({ ...newBooking, check_out: e.target.value })
+                setNewBooking({ ...newBooking, end_date: e.target.value })
               }
               className="w-full px-3 py-2 border border-gray-300 rounded mb-4"
             />
