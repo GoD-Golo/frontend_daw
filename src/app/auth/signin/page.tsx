@@ -21,7 +21,7 @@ export default function SignIn() {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${apiBaseUrl}/signin`, {
+      const response = await fetch(`${apiBaseUrl}/signin.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include", // cookies

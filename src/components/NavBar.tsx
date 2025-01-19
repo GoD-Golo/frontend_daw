@@ -19,7 +19,7 @@ export default function NavBar() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(`${apiBaseUrl}/check_access`, {
+        const response = await fetch(`${apiBaseUrl}/check_access.php`, {
           method: "POST",
           credentials: "include", // cookies
         });
